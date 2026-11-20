@@ -1,0 +1,21 @@
+# dependencies
+/node_modules
+
+# production
+/dist
+
+# environment
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+*.log
+
+# misc
+.DS_Store
+coverage/
+
+# typescript
+*.tsbuildinfo
