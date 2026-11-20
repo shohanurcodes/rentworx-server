@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { allowedOrigins, env } from "../config/env";
 import { ApiError } from "../middlewares/errorHandler";
+import { verifyRenter } from "../middlewares/verifyRoles";
 import { verifyToken } from "../middlewares/verifyToken";
 import { Booking, type IBooking } from "../models/Booking";
 import { Equipment } from "../models/Equipment";
@@ -58,7 +59,7 @@ function calculateDuration(
   return Math.max(1, Math.ceil(days / divisor));
 }
 
-bookingRoutes.post("/checkout", verifyToken, async (req, res, next) => {
+bookingRoutes.post("/checkout", verifyToken, verifyRenter, async (req, res, next) => {
   let booking: HydratedDocument<IBooking> | null = null;
 
   try {

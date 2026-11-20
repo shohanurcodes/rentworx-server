@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { ApiError } from "../middlewares/errorHandler";
+import { verifyRenter } from "../middlewares/verifyRoles";
 import { verifyToken } from "../middlewares/verifyToken";
 import { Equipment, type IEquipment } from "../models/Equipment";
 import { Favorite } from "../models/Favorite";
@@ -17,7 +18,7 @@ const createSchema = z
   })
   .strict();
 
-favoriteRoutes.get("/", verifyToken, async (req, res, next) => {
+favoriteRoutes.get("/", verifyToken, verifyRenter, async (req, res, next) => {
   try {
     const favorites = await Favorite.find({ customerId: req.user!.id })
       .populate({
@@ -41,7 +42,7 @@ favoriteRoutes.get("/", verifyToken, async (req, res, next) => {
   }
 });
 
-favoriteRoutes.post("/", verifyToken, async (req, res, next) => {
+favoriteRoutes.post("/", verifyToken, verifyRenter, async (req, res, next) => {
   try {
     const parsed = createSchema.safeParse(req.body);
 
@@ -80,7 +81,7 @@ favoriteRoutes.post("/", verifyToken, async (req, res, next) => {
   }
 });
 
-favoriteRoutes.delete("/:equipmentId", verifyToken, async (req, res, next) => {
+favoriteRoutes.delete("/:equipmentId", verifyToken, verifyRenter, async (req, res, next) => {
   try {
     const equipmentId = String(req.params.equipmentId);
     assertObjectId(equipmentId, "equipment id");
