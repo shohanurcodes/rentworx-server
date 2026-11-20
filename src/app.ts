@@ -3,7 +3,9 @@ import express from "express";
 import helmet from "helmet";
 import { allowedOrigins } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
+import { authRoutes } from "./routes/authRoutes";
 import { healthRoutes } from "./routes/healthRoutes";
+import { userRoutes } from "./routes/userRoutes";
 
 export function createApp() {
   const app = express();
@@ -30,6 +32,8 @@ export function createApp() {
   app.use(express.json({ limit: "1mb" }));
 
   app.use("/api/health", healthRoutes);
+  app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
