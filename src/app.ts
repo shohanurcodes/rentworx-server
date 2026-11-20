@@ -4,7 +4,9 @@ import helmet from "helmet";
 import { allowedOrigins } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./routes/authRoutes";
+import { bookingRoutes } from "./routes/bookingRoutes";
 import { equipmentRoutes } from "./routes/equipmentRoutes";
+import { favoriteRoutes } from "./routes/favoriteRoutes";
 import { healthRoutes } from "./routes/healthRoutes";
 import { reviewRoutes } from "./routes/reviewRoutes";
 import { userRoutes } from "./routes/userRoutes";
@@ -38,6 +40,8 @@ export function createApp() {
   app.use("/api/users", userRoutes);
   app.use("/api/equipment", equipmentRoutes);
   app.use("/api/reviews", reviewRoutes);
+  app.use("/api/favorites", favoriteRoutes);
+  app.use("/api/bookings", bookingRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
