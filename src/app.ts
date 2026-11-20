@@ -8,6 +8,7 @@ import { bookingRoutes } from "./routes/bookingRoutes";
 import { equipmentRoutes } from "./routes/equipmentRoutes";
 import { favoriteRoutes } from "./routes/favoriteRoutes";
 import { healthRoutes } from "./routes/healthRoutes";
+import { paymentRoutes } from "./routes/paymentRoutes";
 import { reviewRoutes } from "./routes/reviewRoutes";
 import { userRoutes } from "./routes/userRoutes";
 
@@ -29,10 +30,12 @@ export function createApp() {
       },
       credentials: true,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      allowedHeaders: ["Content-Type", "Authorization", "Stripe-Signature"],
     }),
   );
 
+  // Stripe verifies signatures against the exact raw request body.
+  app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
   app.use(express.json({ limit: "1mb" }));
 
   app.use("/api/health", healthRoutes);
@@ -42,6 +45,7 @@ export function createApp() {
   app.use("/api/reviews", reviewRoutes);
   app.use("/api/favorites", favoriteRoutes);
   app.use("/api/bookings", bookingRoutes);
+  app.use("/api/payments", paymentRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
