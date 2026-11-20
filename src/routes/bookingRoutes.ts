@@ -183,3 +183,68 @@ bookingRoutes.post("/checkout", verifyToken, verifyRenter, async (req, res, next
     return next(error);
   }
 });
+
+function bookingSummary(booking: IBooking) {
+  return {
+    id: booking._id!.toString(),
+    equipmentInfo: booking.equipmentInfo,
+    startDate: booking.startDate,
+    endDate: booking.endDate,
+    rentalType: booking.rentalType,
+    duration: booking.duration,
+    requiredQuantity: booking.requiredQuantity,
+    unitPrice: booking.unitPrice,
+    totalAmount: booking.totalAmount,
+    paymentStatus: booking.paymentStatus,
+    bookingStatus: booking.bookingStatus,
+    transactionId: booking.transactionId,
+    stripeSessionId: booking.stripeSessionId,
+    bookingDate: booking.bookingDate,
+    createdAt: booking.createdAt,
+  };
+}
+
+bookingRoutes.get("/my", verifyToken, verifyRenter, async (req, res, next) => {
+  try {
+    const bookings = await Booking.find({ customerId: req.user!.id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return success(
+      res,
+      bookings.map((booking) => bookingSummary(booking as IBooking)),
+      "Bookings retrieved",
+    );
+  } catch (error) {
+    return next(error);
+  }
+});
+
+bookingRoutes.get(
+  "/:id/status",
+  verifyToken,
+  verifyRenter,
+  async (req, res, next) => {
+    try {
+      const id = String(req.params.id);
+      assertObjectId(id, "booking id");
+
+      const booking = await Booking.findOne({
+        _id: id,
+        customerId: req.user!.id,
+      }).lean();
+
+      if (!booking) {
+        throw new ApiError("Booking not found", 404);
+      }
+
+      return success(
+        res,
+        bookingSummary(booking as IBooking),
+        "Booking status retrieved",
+      );
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
