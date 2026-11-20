@@ -4,7 +4,9 @@ import helmet from "helmet";
 import { allowedOrigins } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./routes/authRoutes";
+import { equipmentRoutes } from "./routes/equipmentRoutes";
 import { healthRoutes } from "./routes/healthRoutes";
+import { reviewRoutes } from "./routes/reviewRoutes";
 import { userRoutes } from "./routes/userRoutes";
 
 export function createApp() {
@@ -34,6 +36,8 @@ export function createApp() {
   app.use("/api/health", healthRoutes);
   app.use("/api/auth", authRoutes);
   app.use("/api/users", userRoutes);
+  app.use("/api/equipment", equipmentRoutes);
+  app.use("/api/reviews", reviewRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
