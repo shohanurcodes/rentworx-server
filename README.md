@@ -8,7 +8,7 @@ Provides equipment catalog APIs, JWT verification and role-based authorization, 
 
 ## Live API
 
-`https://<render-service>.onrender.com/api` _(add after deployment)_
+<https://rentworx-server.onrender.com/api>
 
 Repository: <https://github.com/shohanurcodes/rentworx-server>
 
@@ -61,16 +61,16 @@ In production, `config/env.ts` fails fast if `MONGODB_URI` is missing or if `CLI
 
 ## Deployment — Render
 
-The included [`render.yaml`](./render.yaml) is a Render Blueprint. Create a Blueprint service from the repository; it builds with `npm ci && npm run build`, starts with `npm run start`, and health-checks `/api/health`.
+The included [`render.yaml`](./render.yaml) is a Render Blueprint. Create a Blueprint service from the repository; it builds with `npm ci --include=dev && npm run build`, starts with `npm run start`, and health-checks `/api/health`.
 
 Set these Render environment values:
 
 ```text
 MONGODB_URI=<same Atlas cluster as the client>
-CLIENT_URL=https://<vercel-app>.vercel.app
-AUTH_JWKS_URL=https://<vercel-app>.vercel.app/api/auth/jwks
-AUTH_ISSUER=https://<vercel-app>.vercel.app
-AUTH_AUDIENCE=https://<vercel-app>.vercel.app
+CLIENT_URL=https://rentworx-client.vercel.app
+AUTH_JWKS_URL=https://rentworx-client.vercel.app/api/auth/jwks
+AUTH_ISSUER=https://rentworx-client.vercel.app
+AUTH_AUDIENCE=https://rentworx-client.vercel.app
 STRIPE_SECRET_KEY=<Stripe test key>
 STRIPE_WEBHOOK_SECRET=<Stripe webhook secret>
 IMGBB_API_KEY=<imgbb key>
@@ -80,6 +80,14 @@ OWNER_EMAIL=owner@rentworx.test
 OWNER_PASSWORD=<strong password>
 ```
 
-After deployment, register the Stripe webhook against `https://<render-service>.onrender.com/api/payments/webhook`.
+After deployment, register the Stripe webhook against `https://rentworx-server.onrender.com/api/payments/webhook`.
+
+Seed test accounts:
+
+```text
+admin@rentworx.test / Admin123
+owner@rentworx.test / Owner123
+renter.part4@rentworx.test / Renter123
+```
 
 See also [API_CONTRACT.md](../API_CONTRACT.md).
