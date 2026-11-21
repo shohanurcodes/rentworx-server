@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import { allowedOrigins, env } from "../config/env";
 import { ApiError } from "../middlewares/errorHandler";
-import { verifyRenter } from "../middlewares/verifyRoles";
+import {
+  verifyAdmin,
+  verifyOwner,
+  verifyOwnerOrAdmin,
+  verifyRenter,
+} from "../middlewares/verifyRoles";
 import { verifyToken } from "../middlewares/verifyToken";
 import { Booking, type IBooking } from "../models/Booking";
 import { Equipment } from "../models/Equipment";
@@ -184,10 +189,12 @@ bookingRoutes.post("/checkout", verifyToken, verifyRenter, async (req, res, next
   }
 });
 
-function bookingSummary(booking: IBooking) {
+export function bookingSummary(booking: IBooking) {
   return {
     id: booking._id!.toString(),
     equipmentInfo: booking.equipmentInfo,
+    customerInfo: booking.customerInfo,
+    ownerInfo: booking.ownerInfo,
     startDate: booking.startDate,
     endDate: booking.endDate,
     rentalType: booking.rentalType,
@@ -242,6 +249,111 @@ bookingRoutes.get(
         res,
         bookingSummary(booking as IBooking),
         "Booking status retrieved",
+      );
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+const bookingListQuerySchema = z.object({
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).optional(),
+  paymentStatus: z.enum(["pending", "paid", "failed", "refunded"]).optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+});
+
+bookingRoutes.get("/owner", verifyToken, verifyOwner, async (req, res, next) => {
+  try {
+    const bookings = await Booking.find({ ownerId: req.user!.id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return success(
+      res,
+      bookings.map((booking) => bookingSummary(booking as IBooking)),
+      "Owner bookings retrieved",
+    );
+  } catch (error) {
+    return next(error);
+  }
+});
+
+bookingRoutes.get("/admin", verifyToken, verifyAdmin, async (req, res, next) => {
+  try {
+    const parsed = bookingListQuerySchema.safeParse(req.query);
+
+    if (!parsed.success) {
+      throw new ApiError("Invalid query parameters", 400, parsed.error.issues);
+    }
+
+    const { status, paymentStatus, page, limit } = parsed.data;
+    const filter: Record<string, unknown> = {};
+
+    if (status) filter.bookingStatus = status;
+    if (paymentStatus) filter.paymentStatus = paymentStatus;
+
+    const total = await Booking.countDocuments(filter);
+    const bookings = await Booking.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    return success(
+      res,
+      bookings.map((booking) => bookingSummary(booking as IBooking)),
+      "All bookings retrieved",
+      200,
+      {
+        page,
+        limit,
+        total,
+        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
+      },
+    );
+  } catch (error) {
+    return next(error);
+  }
+});
+
+bookingRoutes.patch(
+  "/:id/status",
+  verifyToken,
+  verifyOwnerOrAdmin,
+  async (req, res, next) => {
+    try {
+      const id = String(req.params.id);
+      assertObjectId(id, "booking id");
+
+      const parsed = z
+        .object({ bookingStatus: z.enum(["confirmed", "completed", "cancelled"]) })
+        .strict()
+        .safeParse(req.body);
+
+      if (!parsed.success) {
+        throw new ApiError("Invalid booking status", 400, parsed.error.issues);
+      }
+
+      const filter: Record<string, unknown> = { _id: id };
+
+      if (req.user!.role === "owner") {
+        filter.ownerId = req.user!.id;
+      }
+
+      const booking = await Booking.findOne(filter);
+
+      if (!booking) {
+        throw new ApiError("Booking not found", 404);
+      }
+
+      booking.bookingStatus = parsed.data.bookingStatus;
+      await booking.save();
+
+      return success(
+        res,
+        bookingSummary(booking),
+        "Booking status updated",
       );
     } catch (error) {
       return next(error);

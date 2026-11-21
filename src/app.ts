@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import { allowedOrigins } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
+import { analyticsRoutes } from "./routes/analyticsRoutes";
 import { authRoutes } from "./routes/authRoutes";
 import { bookingRoutes } from "./routes/bookingRoutes";
 import { equipmentRoutes } from "./routes/equipmentRoutes";
@@ -10,6 +11,7 @@ import { favoriteRoutes } from "./routes/favoriteRoutes";
 import { healthRoutes } from "./routes/healthRoutes";
 import { paymentRoutes } from "./routes/paymentRoutes";
 import { reviewRoutes } from "./routes/reviewRoutes";
+import { uploadRoutes } from "./routes/uploadRoutes";
 import { userRoutes } from "./routes/userRoutes";
 
 export function createApp() {
@@ -46,6 +48,8 @@ export function createApp() {
   app.use("/api/favorites", favoriteRoutes);
   app.use("/api/bookings", bookingRoutes);
   app.use("/api/payments", paymentRoutes);
+  app.use("/api/analytics", analyticsRoutes);
+  app.use("/api/upload", uploadRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
