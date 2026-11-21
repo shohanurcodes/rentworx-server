@@ -19,9 +19,9 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().default(""),
   IMGBB_API_KEY: z.string().default(""),
 
-  ADMIN_EMAIL: z.email().default("admin@rentworx.test"),
+  ADMIN_EMAIL: z.email().default("faizakhann995@gmail.com"),
   ADMIN_PASSWORD: z.string().min(6).default("Admin123"),
-  OWNER_EMAIL: z.email().default("owner@rentworx.test"),
+  OWNER_EMAIL: z.email().default("s42226444@gmail.com"),
   OWNER_PASSWORD: z.string().min(6).default("Owner123"),
 });
 

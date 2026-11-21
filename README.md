@@ -74,9 +74,9 @@ AUTH_AUDIENCE=https://rentworx-client.vercel.app
 STRIPE_SECRET_KEY=<Stripe test key>
 STRIPE_WEBHOOK_SECRET=<Stripe webhook secret>
 IMGBB_API_KEY=<imgbb key>
-ADMIN_EMAIL=admin@rentworx.test
+ADMIN_EMAIL=faizakhann995@gmail.com
 ADMIN_PASSWORD=<strong password>
-OWNER_EMAIL=owner@rentworx.test
+OWNER_EMAIL=s42226444@gmail.com
 OWNER_PASSWORD=<strong password>
 ```
 
@@ -85,8 +85,8 @@ After deployment, register the Stripe webhook against `https://rentworx-server.o
 Seed test accounts:
 
 ```text
-admin@rentworx.test / Admin123
-owner@rentworx.test / Owner123
+faizakhann995@gmail.com / Admin123
+s42226444@gmail.com / Owner123
 renter.part4@rentworx.test / Renter123
 ```
 
