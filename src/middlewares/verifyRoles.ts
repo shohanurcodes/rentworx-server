@@ -21,3 +21,19 @@ export const verifyRenter = requireRole("customer", "Customer");
 export const verifyOwner = requireRole("owner", "Owner");
 
 export const verifyAdmin = requireRole("admin", "Admin");
+
+export function verifyOwnerOrAdmin(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
+  if (!req.user) {
+    return next(new ApiError("Authentication required", 401));
+  }
+
+  if (req.user.role !== "owner" && req.user.role !== "admin") {
+    return next(new ApiError("Owner or admin access required", 403));
+  }
+
+  return next();
+}
