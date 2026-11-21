@@ -10,6 +10,8 @@ Provides equipment catalog APIs, JWT verification and role-based authorization, 
 
 `https://<render-service>.onrender.com/api` _(add after deployment)_
 
+Repository: <https://github.com/shohanurcodes/rentworx-server>
+
 ## Key features
 
 - Express 5 + TypeScript + MongoDB/Mongoose
@@ -55,4 +57,29 @@ npm run seed       # seed admin/owner/sample data
 
 See [`.env.example`](./.env.example). Never commit real credentials.
 
-See also [API_CONTRACT.md](./API_CONTRACT.md).
+In production, `config/env.ts` fails fast if `MONGODB_URI` is missing or if `CLIENT_URL` / `AUTH_JWKS_URL` / `AUTH_ISSUER` / `AUTH_AUDIENCE` still point to localhost.
+
+## Deployment — Render
+
+The included [`render.yaml`](./render.yaml) is a Render Blueprint. Create a Blueprint service from the repository; it builds with `npm ci && npm run build`, starts with `npm run start`, and health-checks `/api/health`.
+
+Set these Render environment values:
+
+```text
+MONGODB_URI=<same Atlas cluster as the client>
+CLIENT_URL=https://<vercel-app>.vercel.app
+AUTH_JWKS_URL=https://<vercel-app>.vercel.app/api/auth/jwks
+AUTH_ISSUER=https://<vercel-app>.vercel.app
+AUTH_AUDIENCE=https://<vercel-app>.vercel.app
+STRIPE_SECRET_KEY=<Stripe test key>
+STRIPE_WEBHOOK_SECRET=<Stripe webhook secret>
+IMGBB_API_KEY=<imgbb key>
+ADMIN_EMAIL=admin@rentworx.test
+ADMIN_PASSWORD=<strong password>
+OWNER_EMAIL=owner@rentworx.test
+OWNER_PASSWORD=<strong password>
+```
+
+After deployment, register the Stripe webhook against `https://<render-service>.onrender.com/api/payments/webhook`.
+
+See also [API_CONTRACT.md](../API_CONTRACT.md).
