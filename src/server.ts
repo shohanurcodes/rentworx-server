@@ -1,11 +1,13 @@
 import { createApp } from "./app";
 import { connectDB, disconnectDB } from "./config/db";
 import { env } from "./config/env";
+import { startBookingStatusJob } from "./jobs/bookingStatusJob";
 
 async function start() {
   await connectDB();
 
   const app = createApp();
+  const cronTask = startBookingStatusJob();
 
   const server = app.listen(env.PORT, () => {
     console.log(`RentWorx API running on http://localhost:${env.PORT}`);
@@ -14,6 +16,7 @@ async function start() {
 
   const shutdown = (signal: string) => {
     console.log(`${signal} received. Closing RentWorx API server...`);
+    cronTask.stop();
     server.close(async () => {
       await disconnectDB();
       console.log("RentWorx API server closed.");

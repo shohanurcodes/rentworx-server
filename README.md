@@ -22,7 +22,8 @@ Repository: <https://github.com/shohanurcodes/rentworx-server>
 - Booking pricing and atomic availability reservation
 - Stripe Checkout sessions and signed webhooks
 - Payments collection and transaction records
-- Admin/owner analytics and cron booking status updates
+- Admin/owner analytics with 6-month booking, revenue, and earnings series
+- Cron job that completes paid bookings past their end date (on boot + every 15 minutes)
 
 ## npm packages
 
@@ -62,6 +63,8 @@ In production, `config/env.ts` fails fast if `MONGODB_URI` is missing or if `CLI
 ## Deployment — Render
 
 The included [`render.yaml`](./render.yaml) is a Render Blueprint. Create a Blueprint service from the repository; it builds with `npm ci --include=dev && npm run build`, starts with `npm run start`, and health-checks `/api/health`.
+
+On Render's free tier the service may sleep when idle. The booking job runs once on every boot, so any paid booking that expired while the service was asleep is still finalized.
 
 Set these Render environment values:
 

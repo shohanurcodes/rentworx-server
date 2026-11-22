@@ -3,7 +3,7 @@ services:
     name: rentworx-api
     runtime: node
     plan: free
-    region: oregon
+    region: singapore
     branch: main
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm run start

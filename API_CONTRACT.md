@@ -1,6 +1,6 @@
 # RentWorx API Contract
 
-Base URL: `http://localhost:5000/api` (local) / `https://<server-domain>/api` (production)
+Base URL: `http://localhost:5000/api` (local) / `https://rentworx-server.onrender.com/api` (production)
 
 ## Response shape
 
@@ -41,7 +41,7 @@ Middlewares: `verifyToken`, `verifyRenter`, `verifyOwner`, `verifyAdmin`.
 | GET | `/equipment` | approved equipment, search/filter/sort/paginate |
 | GET | `/equipment/featured?limit=6` | featured approved equipment |
 | GET | `/equipment/:id` | equipment details |
-| GET | `/reviews` | approved reviews |
+| GET | `/reviews?limit=4` | approved reviews |
 
 `GET /equipment` query parameters:
 
@@ -74,7 +74,7 @@ page, limit
 | PATCH | `/equipment/:id` | update my equipment |
 | DELETE | `/equipment/:id` | delete my equipment |
 | GET | `/bookings/owner` | rentals for my equipment |
-| PATCH | `/bookings/:id/status` | confirm/cancel booking |
+| PATCH | `/bookings/:id/status` | confirm/complete/cancel booking |
 | GET | `/analytics/owner` | owner analytics |
 | POST | `/upload/imgbb` | proxy imgbb upload |
 
@@ -84,7 +84,8 @@ page, limit
 | --- | --- | --- |
 | GET | `/users` | all users |
 | PATCH | `/users/:id/role` | change role |
-| PATCH | `/users/:id/manage` | activate/deactivate/delete |
+| PATCH | `/users/:id/manage` | activate/deactivate account |
+| DELETE | `/users/:id` | delete user account |
 | GET | `/equipment/admin` | all equipment statuses |
 | PATCH | `/equipment/:id/status` | approve/reject |
 | PATCH | `/equipment/:id` | update equipment |
@@ -92,10 +93,20 @@ page, limit
 | GET | `/bookings/admin` | all rentals |
 | GET | `/analytics/admin` | platform analytics |
 
+## Analytics response fields
+
+Both analytics endpoints include their totals/status counts plus six zero-filled monthly points (oldest → newest, UTC, e.g. `"Nov 26"`):
+
+```ts
+monthlyBookings: Array<{ month: string; bookings: number }>
+monthlyRevenue:  Array<{ month: string; revenue: number }>   // admin, paid bookings
+monthlyEarnings: Array<{ month: string; earnings: number }>  // owner, succeeded payments
+```
+
 ## Stripe webhook
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
 | POST | `/payments/webhook` | finalize booking + save payment |
 
-The webhook route uses `express.raw()` and must be mounted before `express.json()`.
+Handled events: `checkout.session.completed` and `checkout.session.expired`. The webhook route uses `express.raw()` and must be mounted before `express.json()`.
