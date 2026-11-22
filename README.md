@@ -83,7 +83,7 @@ OWNER_EMAIL=s42226444@gmail.com
 OWNER_PASSWORD=<strong password>
 ```
 
-After deployment, register the Stripe webhook against `https://rentworx-server.onrender.com/api/payments/webhook`.
+The Stripe webhook is registered on the test account at `https://rentworx-server.onrender.com/api/payments/webhook` (endpoint `we_1UeY51C6euQJvmFzEA8f0k1S`) for `checkout.session.completed` and `checkout.session.expired`. Its signing secret is stored only in the Render `STRIPE_WEBHOOK_SECRET` env var. If the endpoint is ever recreated, copy its new `whsec_...` secret into Render **and trigger a fresh deploy** — updating the env var alone does not restart the running process.
 
 Seed test accounts:
 
