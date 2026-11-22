@@ -91,7 +91,7 @@ paymentRoutes.post("/webhook", async (req, res, next) => {
                 paidAt: new Date(event.created * 1000),
               },
             },
-            { upsert: true, new: true, setDefaultsOnInsert: true },
+            { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
           );
         }
       }

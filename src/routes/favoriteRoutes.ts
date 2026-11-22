@@ -72,7 +72,7 @@ favoriteRoutes.post("/", verifyToken, verifyRenter, async (req, res, next) => {
           equipmentId: equipment._id,
         },
       },
-      { upsert: true, new: true },
+      { upsert: true, returnDocument: "after" },
     );
 
     return success(res, { id: equipment._id.toString() }, "Added to favorites");

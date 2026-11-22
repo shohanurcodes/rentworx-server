@@ -370,7 +370,7 @@ equipmentRoutes.patch(
       const updated = await Equipment.findOneAndUpdate(
         filter,
         { $set: parsed.data },
-        { new: true, runValidators: true },
+        { returnDocument: "after", runValidators: true },
       );
 
       if (!updated) {

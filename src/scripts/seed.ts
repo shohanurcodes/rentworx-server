@@ -197,6 +197,102 @@ const seedEquipment = [
       "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
     terms: "Lens hoods and caps must be returned. Missing accessories are charged at retail cost.",
   },
+  {
+    name: "DJI Mavic 3 Pro Drone Kit",
+    description:
+      "Aerial camera drone with 4/3 CMOS sensor, three lenses, spare batteries, and a hard case for shoots and site surveys.",
+    category: EQUIPMENT_CATEGORIES[1],
+    location: "Dhaka, Bangladesh",
+    price: 120,
+    rentalType: "daily" as const,
+    quantity: 4,
+    condition: "Like New",
+    brand: "DJI",
+    model: "Mavic 3 Pro Cine",
+    image:
+      "https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1200&q=80",
+    terms: "Valid drone permit required. Batteries returned charged; deposits released after inspection.",
+  },
+  {
+    name: "Range Rover Sport SUV",
+    description:
+      "Premium 5-seat SUV for executive transfers, film crews, and outstation trips with GPS and charging ports.",
+    category: EQUIPMENT_CATEGORIES[2],
+    location: "Chattogram, Bangladesh",
+    price: 210,
+    rentalType: "daily" as const,
+    quantity: 3,
+    condition: "Excellent",
+    brand: "Land Rover",
+    model: "Range Rover Sport L461",
+    image:
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
+    terms: "Chauffeur optional. 250 km/day included; fuel, tolls, and extras billed separately.",
+  },
+  {
+    name: "Portable PA & Stage Sound Package",
+    description:
+      "Powered speakers, subwoofers, digital mixer, and wireless microphones for conferences, weddings, and small gigs.",
+    category: EQUIPMENT_CATEGORIES[5],
+    location: "Dhaka, Bangladesh",
+    price: 180,
+    rentalType: "daily" as const,
+    quantity: 4,
+    condition: "Excellent",
+    brand: "JBL",
+    model: "PRX812W + SRX818S",
+    image:
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
+    terms: "Sound technician recommended. Venue power and setup time must be confirmed in advance.",
+  },
+  {
+    name: "Dell Precision 5680 Workstation",
+    description:
+      "Mobile workstation with 32GB RAM, 1TB SSD, and a calibrated OLED display for editing, CAD, and development.",
+    category: EQUIPMENT_CATEGORIES[4],
+    location: "Sylhet, Bangladesh",
+    price: 95,
+    rentalType: "weekly" as const,
+    quantity: 6,
+    condition: "Like New",
+    brand: "Dell",
+    model: "Precision 5680",
+    image:
+      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1200&q=80",
+    terms: "Software must be licensed by the renter. Data wipe certificate provided after return.",
+  },
+  {
+    name: "Fujifilm X-T5 Mirrorless Kit",
+    description:
+      "40MP APS-C mirrorless body with 18-55mm lens, two batteries, and a weather-sealed bag for stills and video.",
+    category: EQUIPMENT_CATEGORIES[1],
+    location: "Khulna, Bangladesh",
+    price: 75,
+    rentalType: "daily" as const,
+    quantity: 8,
+    condition: "Excellent",
+    brand: "Fujifilm",
+    model: "X-T5 + XC 18-55mm",
+    image:
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80",
+    terms: "Cleaning fee applies for sand or smoke use. Missing accessories charged at retail cost.",
+  },
+  {
+    name: "Komatsu PC210 LC Excavator",
+    description:
+      "21-ton tracked excavator for trenching, road work, and site preparation with bucket and quick-coupler.",
+    category: EQUIPMENT_CATEGORIES[0],
+    location: "Rajshahi, Bangladesh",
+    price: 390,
+    rentalType: "daily" as const,
+    quantity: 3,
+    condition: "Good",
+    brand: "Komatsu",
+    model: "PC210 LC-11",
+    image:
+      "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=1200&q=80",
+    terms: "Certified operator required. Minimum 3 days; fuel and transport charges apply.",
+  },
 ];
 
 const seedReviews = [
@@ -256,7 +352,7 @@ async function upsertUser(input: {
       },
       $setOnInsert: { createdAt: new Date() },
     },
-    { new: true, upsert: true, runValidators: true },
+    { returnDocument: "after", upsert: true, runValidators: true },
   );
 
   const db = mongoose.connection.db;
@@ -335,7 +431,7 @@ async function runSeed() {
           reviewCount: 12 + index * 3,
         },
       },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      { returnDocument: "after", upsert: true, runValidators: true, setDefaultsOnInsert: true },
     );
   }
 
@@ -351,7 +447,7 @@ async function runSeed() {
           isApproved: true,
         },
       },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      { returnDocument: "after", upsert: true, runValidators: true, setDefaultsOnInsert: true },
     );
   }
 
